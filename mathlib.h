@@ -1,3 +1,4 @@
+
 #ifndef _MATHLIB_H_
 #define _MATHLIB_H_
 
@@ -200,7 +201,7 @@ MLLIB void ml_veclist3_push(ml_Vec3List *l, ml_Vec3 point){
     }
     l->data[l->size++] = point;
 }
-/* Logic Here */
+
 
 
 #endif
