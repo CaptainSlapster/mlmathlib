@@ -1,2 +1,2 @@
 #define ML_LIB_IMPLEMENTATION
-#include "mathlib.h"
+#include "ml_mathlib.h"
