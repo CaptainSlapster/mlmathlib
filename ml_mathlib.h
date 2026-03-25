@@ -113,6 +113,12 @@ static inline ml_Vec3 ml_vec_3_scalar_add(ml_Vec3 v, float s)                   
 static inline ml_Vec3 ml_vec_3_negate(ml_Vec3 v)                                        {return (ml_Vec3){.x = -v.x, .y = -v.y, .z = -v.z}; }
 static inline ml_Vec2 ml_vec_2_negate(ml_Vec2 v)                                        {return (ml_Vec2){.x = -v.x, .y = -v.y}; }
 
+static inline float ml_perc_of_f(float new_value, float old_value)                      {return (new_value / old_value)* 100;}
+static inline double ml_perc_of_d(double new_value, double old_value)                   {return (new_value / old_value)* 100;}
+static inline long double ml_perc_of_ld(long double new_value, long double old_value)   {return (new_value / old_value)* 100;}
+static inline int ml_perc_of_i(int new_value, int old_value)                            {return (new_value * 100) / old_value;}
+
+
 MLLIB void ml_veclist2_push(ml_Vec2List *l, ml_Vec2 point);
 
 MLLIB void ml_veclist3_push(ml_Vec3List *l, ml_Vec3 point);
@@ -158,6 +164,13 @@ MLLIB void ml_veclist3_push(ml_Vec3List *l, ml_Vec3 point);
     int:            ml_absi,                \
     default:        ml_absd                 \
 )(x)
+#define ml_perc_of(new_value, old_value) _Generic((new_value),             \
+    float:          ml_perc_of_f,                \
+    double:         ml_perc_of_d,                \
+    long double:    ml_perc_of_ld,               \
+    int:            ml_perc_of_i,                \
+    default:        ml_perc_of_d                 \
+)(new_value, old_value)
 #define ml_veclist_push(list, point) _Generic((list),             \
     ml_Vec2List*:          ml_veclist2_push,                \
     ml_Vec3List*:          ml_veclist3_push               \
