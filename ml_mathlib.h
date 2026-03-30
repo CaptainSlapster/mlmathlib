@@ -80,21 +80,21 @@ static inline double ml_clamp_d(double val, double min, double max)             
 static inline long double ml_clamp_ld(long double val, long double min, long double max) { return (val < min) ? min : (val > max) ? max : val ;}
 static inline int ml_clampi(int val, int min, int max)                                   { return (val < min) ? min : (val > max) ? max : val ;}
 
-static inline float ml_deg2rad_f(float d)                                                { return ((d) * ML_PI_F) / 180.0f ;}
-static inline double ml_deg2rad_d(double d)                                              { return ((d) * ML_PI_D) / 180.0 ;}
-static inline long double ml_deg2rad_ld(long double d)                                   { return ((d) * ML_PI_LD) / 180.0L ;}
+static inline float ml_deg2rad_f(float d)                                                { return ((d) * ML_PI(d)) / 180.0f ;}
+static inline double ml_deg2rad_d(double d)                                              { return ((d) * ML_PI(d)) / 180.0 ;}
+static inline long double ml_deg2rad_ld(long double d)                                   { return ((d) * ML_PI(d)) / 180.0L ;}
 
-static inline float ml_rad2deg_f(float r)                                                { return ((r) * 180.0f) / ML_PI_F ;}
-static inline double ml_rad2deg_d(double r)                                              { return ((r) * 180.0) / ML_PI_D ;}
-static inline long double ml_rad2deg_ld(long double r)                                   { return ((r) * 180.0L) / ML_PI_LD ;}
+static inline float ml_rad2deg_f(float r)                                                { return ((r) * 180.0f) / ML_PI(r) ;}
+static inline double ml_rad2deg_d(double r)                                              { return ((r) * 180.0) / ML_PI(r) ;}
+static inline long double ml_rad2deg_ld(long double r)                                   { return ((r) * 180.0L) / ML_PI(r) ;}
 
 static inline float ml_area_of_triangle_f(float b, float h)                              { return 0.5f * b * h ;}
 static inline double ml_area_of_triangle_d(double b, double h)                           { return 0.5 * b * h ;}
 static inline long double ml_area_of_triangle_ld(long double b, long double h)           { return 0.5L * b * h ;}
 
-static inline float ml_area_of_circle_f(float r)                                         { return ML_PI_F * (ml_sqr_f(r));}
-static inline double ml_area_of_circle_d(double r)                                       { return ML_PI_D * (ml_sqr_d(r));}
-static inline long double ml_area_of_circle_ld(long double r)                            { return ML_PI_LD * (ml_sqr_ld(r));}
+static inline float ml_area_of_circle_f(float r)                                         { return ML_PI(r) * (ml_sqr_f(r));}
+static inline double ml_area_of_circle_d(double r)                                       { return ML_PI(r) * (ml_sqr_d(r));}
+static inline long double ml_area_of_circle_ld(long double r)                            { return ML_PI(r) * (ml_sqr_ld(r));}
 
 static inline float ml_absf(float x)                                                     { return (x < 0)? -x : x ;}
 static inline float ml_absd(double x)                                                    { return (x < 0)? -x : x ;}
@@ -119,9 +119,29 @@ static inline long double ml_perc_of_ld(long double new_value, long double old_v
 static inline int ml_perc_of_i(int new_value, int old_value)                            {return (new_value * 100) / old_value;}
 
 
+MLLIB float ml_dcos_f(float deg);
+MLLIB double ml_dcos_d(double deg);
+MLLIB long double ml_dcos_ld(long double deg);
+
+MLLIB float ml_dsin_f(float deg);
+MLLIB double ml_dsin_d(double deg);
+MLLIB long double ml_dsin_ld(long double deg);
+
 MLLIB void ml_veclist2_push(ml_Vec2List *l, ml_Vec2 point);
 
 MLLIB void ml_veclist3_push(ml_Vec3List *l, ml_Vec3 point);
+
+MLLIB float ml_heron_area_of_triangle(float x1, float y1, float x2, float y2, float x3, float y3);
+
+MLLIB float ml_point_distance(float x1, float y1, float x2, float y2);
+
+MLLIB float ml_length_comp_x_f(float len, float dir);
+MLLIB double ml_length_comp_x_d(double len, double dir);
+MLLIB long double ml_length_comp_x_ld(long double len, long double dir);
+
+MLLIB float ml_length_comp_y_f(float len, float dir);
+MLLIB double ml_length_comp_y_d(double len, double dir);
+MLLIB long double ml_length_comp_y_ld(long double len, long double dir);
 
 /* Generics */
 
@@ -195,7 +215,30 @@ MLLIB void ml_veclist3_push(ml_Vec3List *l, ml_Vec3 point);
     ml_Vec2:          ml_vec_2_negate,             \
     ml_Vec3:          ml_vec_3_negate             \
 )(v)
-
+#define ml_dcos(v) _Generic((v),             \
+    float:          ml_dcos_f,                \
+    double:         ml_dcos_d,                \
+    long double:    ml_dcos_ld,               \
+    default:        ml_dcos_d                \
+)(v)
+#define ml_dsin(v) _Generic((v),             \
+    float:          ml_dsin_f,                \
+    double:         ml_dsin_d,                \
+    long double:    ml_dsin_ld,               \
+    default:        ml_dsin_d                \
+)(v)
+#define ml_length_comp_x(len, dir) _Generic((len)  + (dir),             \
+    float:          ml_length_comp_x_f,                \
+    double:         ml_length_comp_x_d,                \
+    long double:    ml_length_comp_x_ld,               \
+    default:        ml_length_comp_x_d                 \
+)(len, dir)
+#define ml_length_comp_y(len, dir) _Generic((len)  + (dir),             \
+    float:          ml_length_comp_y_f,                \
+    double:         ml_length_comp_y_d,                \
+    long double:    ml_length_comp_y_ld,               \
+    default:        ml_length_comp_y_d                 \
+)(len, dir)
 #ifdef __cplusplus
 }
 #endif
@@ -211,6 +254,21 @@ MLLIB void ml_veclist3_push(ml_Vec3List *l, ml_Vec3 point);
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
+
+MLLIB float ml_vec_2_mag(ml_Vec2 v){
+    return sqrtf((v.x * v.x) + (v.y * v.y));
+}
+MLLIB float ml_vec_3_mag(ml_Vec3 v){
+    return sqrtf((v.x * v.x) + (v.y * v.y)+ (v.z * v.z));
+}
+MLLIB float ml_dcos_f(float deg)                        {return cos(deg * ML_PI(deg)/180);}
+MLLIB double ml_dcos_d(double deg)                      {return cos(deg * ML_PI(deg)/180);}
+MLLIB long double ml_dcos_ld(long double deg)           {return cos(deg * ML_PI(deg)/180);}
+
+MLLIB float ml_dsin_f(float deg)                        {return sin(deg * ML_PI(deg)/180);}
+MLLIB double ml_dsin_d(double deg)                      {return sin(deg * ML_PI(deg)/180);}
+MLLIB long double ml_dsin_ld(long double deg)           {return sin(deg * ML_PI(deg)/180);}
 
 MLLIB void ml_veclist2_push(ml_Vec2List *l, ml_Vec2 point){
     if(l->capacity == 0){
@@ -245,10 +303,38 @@ MLLIB void ml_veclist3_push(ml_Vec3List *l, ml_Vec3 point){
     l->data[l->size++] = point;
 }
 
-MLLIB float ml_vec_2_mag(ml_Vec2 v){
-    return sqrtf((v.x * v.x) + (v.y * v.y));
+
+MLLIB float ml_heron_area_of_triangle(float x1, float y1, float x2, float y2, float x3, float y3){
+    float side_a = sqrtf(ml_sqr(x2 - x1) + ml_sqr(y2 - y1));
+    float side_b = sqrtf(ml_sqr(x3 - x1) + ml_sqr(y3 - y1));
+    float side_c = sqrtf(ml_sqr(x3 - x2) + ml_sqr(y3 - y2));
+
+    float p = (side_a + side_b + side_c);
+
+    float s = (p / 2);
+
+    return sqrtf(s * (s - side_a) * (s - side_b) * (s - side_c));
 }
-MLLIB float ml_vec_3_mag(ml_Vec3 v){
-    return sqrtf((v.x * v.x) + (v.y * v.y)+ (v.z * v.z));
+MLLIB float ml_point_distance(float x1, float y1, float x2, float y2){
+    return sqrtf(ml_sqr(x2 - x1) + ml_sqr(y2 - y1));
+}
+MLLIB float ml_length_comp_x_f(float len, float dir){
+    return len * ml_dcos(dir);
+}
+MLLIB double ml_length_comp_x_d(double len, double dir){
+    return len * ml_dcos(dir);
+}
+MLLIB long double ml_length_comp_x_ld(long double len, long double dir){
+    return len * ml_dcos(dir);
+}
+
+MLLIB float ml_length_comp_y_f(float len, float dir){
+    return len * -ml_dsin(dir);
+}
+MLLIB double ml_length_comp_y_d(double len, double dir){
+    return len * -ml_dsin(dir);
+}
+MLLIB long double ml_length_comp_y_ld(long double len, long double dir){
+    return len * -ml_dsin(dir);
 }
 #endif
